@@ -23,7 +23,7 @@ jobs: ##conjunto de tarefas a serem executadas
 
       - name: "Terraform init"
         working-directory: ./src ##para executar os comandos dentro da pasta src do projeto
-        run:  terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" - backend-config="key=${{ secrets.AWS_BUCKET_FILE }}" ##aqui com o "run" (que não é uma action) será executado um comando
+        run:  terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}" ##aqui com o "run" (que não é uma action) será executado um comando
 
       - name: "Terrafomr Apply"
         working-directory: ./src
