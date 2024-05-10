@@ -1,0 +1,30 @@
+name: "Terraform"
+
+on:
+  push: ##eventos que irão disparar as ações
+    branches: ["main"] ##somente se tiver alguma alteração na branch mais e
+    paths: ["src/**"]  ## se essas alterações forem em quaisquer arquivos dentro da pasta "src"
+  workflow_dispatch:  ##serve para dispara manualmente a pipeline. Serve principalmente para testes.
+
+jobs: ##conjunto de tarefas a serem executadas
+  terraform:
+    name: "Terraform Apply"
+    runs-on: "ubuntu-latest" ##é o agente de execução
+    steps:  ##passos da execução
+      - name: "Configure AWS Credentials"
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+      - name: "Checkout"  ##pega o código do projeto
+        uses: actions/checkout@v4  ##utilizar o github marketplace para achar mais actions
+
+      - name: "Terraform init"
+        working-directory: ./src ##para executar os comandos dentro da pasta src do projeto
+        run:  terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" - backend-config="key=${{ secrets.AWS_BUCKET_FILE }}" ##aqui com o "run" (que não é uma action) será executado um comando
+
+      - name: "Terrafomr Apply"
+        working-directory: ./src
+        run: terraform apply --auto-approve
